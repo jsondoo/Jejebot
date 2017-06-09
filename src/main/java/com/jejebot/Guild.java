@@ -9,6 +9,7 @@ public class Guild {
     private IGuild iGuild;
     private String name;
     private String prefix = "!";
+    private boolean chatMode = false;
     private boolean unoGame = false;
 
     public Guild (IGuild guild){
@@ -22,6 +23,14 @@ public class Guild {
             return true;
         }
         return false;
+    }
+
+    public void toggleChatMode(){
+        chatMode = !chatMode;
+    }
+
+    public boolean getChatMode(){
+        return this.chatMode;
     }
 
     public String getPrefix(){

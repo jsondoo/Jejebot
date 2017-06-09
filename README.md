@@ -10,8 +10,6 @@ Currently available commands:
 * ``` !markov ``` generates and sends a random markov message (follows this [word-pair markov model](http://stackoverflow.com/a/5307230) from stackoverflow)
 * ``` !uptime ``` how long the bot has been running for
 * ``` !changeprefix ``` change command prefix for your guild
-
-Planned Features:
-* ``` !queue <link> ``` takes youtube URL and adds audio from the video to the queue (bot must be in a voice channel)
-* ``` !uno ``` starts a game of UNO
+* ``` !love ``` chance of relationship with another user
+* ``` !queue <link> ``` takes youtube URL and adds audio from the video to the queue (bot must be in a voice channel)=
 

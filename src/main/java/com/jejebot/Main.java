@@ -16,7 +16,7 @@ public class Main {
         IDiscordClient client = createClient();
         if (client == null) return;
 
-        // why doesnt this work
+        // TODO why doesnt this work
         client.changeStatus(Status.game("Type !help to get started"));
 
         EventDispatcher dispatcher = client.getDispatcher();

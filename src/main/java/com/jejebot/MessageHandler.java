@@ -25,6 +25,7 @@ public class MessageHandler {
     private IGuild iGuild;
     private Guild guild;
     private IUser user;
+    private Pandorabot bot = new Pandorabot();
 
     @EventSubscriber
     public void onMessageReceived(MessageReceivedEvent event) throws MissingPermissionsException, RateLimitException, DiscordException {
@@ -32,11 +33,20 @@ public class MessageHandler {
         this.channel = message.getChannel();
         this.iGuild = message.getGuild();
         this.guild = GuildManager.getInstance().getGuildWithIGuild(iGuild);
-        // System.out.println(guild.getGuildName());
         this.user = message.getAuthor();
 
         if (user.isBot()) return;
 
+        // check if chat bot is turned on
+        if(guild.getChatMode()){
+            try {
+                channel.sendMessage(bot.getResponse(message.getContent()));
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        // check if user entered a command
         if (message.getContent().startsWith(guild.getPrefix())) {
             parseCommand(message.getContent());
         }
@@ -128,8 +138,14 @@ public class MessageHandler {
                     channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with " + nextWord + " is "
                             + loveChance + "%.");
                     break;
-                case markov:
                 case chat:
+                    guild.toggleChatMode();
+                    if(guild.getChatMode())
+                        channel.sendMessage("CHAT MODE ON");
+                    else
+                        channel.sendMessage("CHAT MODE OFF");
+                    break;
+                case markov:
                 case shutup:
                 case quote:
                 default:
