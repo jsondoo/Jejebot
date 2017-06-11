@@ -28,7 +28,8 @@ public class MessageHandler {
     private Pandorabot bot = new Pandorabot();
 
     @EventSubscriber
-    public void onMessageReceived(MessageReceivedEvent event) throws MissingPermissionsException, RateLimitException, DiscordException {
+    public void onMessageReceived(MessageReceivedEvent event) throws MissingPermissionsException, RateLimitException,
+            DiscordException {
         this.message = event.getMessage();
         this.channel = message.getChannel();
         this.iGuild = message.getGuild();
@@ -37,24 +38,25 @@ public class MessageHandler {
 
         if (user.isBot()) return;
 
-        // check if chat bot is turned on
-        if(guild.getChatMode()){
-            try {
-                channel.sendMessage(bot.getResponse(message.getContent()));
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        // check if user entered a command
+        // user entered a command
         if (message.getContent().startsWith(guild.getPrefix())) {
             parseCommand(message.getContent());
+        } else if (guild.getChatMode()) { // check if chatmode is turned on
+            try {
+                channel.sendMessage(bot.getResponse(message.getContent()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (message.getContent().trim().toLowerCase().equals("ayy")) { // ayy lmao
+            channel.sendMessage("lmao");
         }
+
     }
 
+    // handles commands
     private void parseCommand(String msg) throws MissingPermissionsException, RateLimitException, DiscordException {
         String[] words = msg.trim().split(" ");
-        String commandWord = words[0].replace(guild.getPrefix(),""); // get command without the command_prefix
+        String commandWord = words[0].replace(guild.getPrefix(), ""); // get command without the command_prefix
         String nextWord = words.length >= 2 ? words[1] : null;
 
         Command command = Command.valueOf(commandWord);
@@ -81,7 +83,8 @@ public class MessageHandler {
                     break;
                 case voicejoin:
                     IVoiceChannel voiceChannel = message.getAuthor().getConnectedVoiceChannels().get(0);
-                    if (message.getGuild().getVoiceChannels().contains(voiceChannel)) { // ensure that the voice channel exists in the iGuild the message was sent from
+                    if (message.getGuild().getVoiceChannels().contains(voiceChannel)) { // ensure that the voice
+                        // channel exists in the iGuild the message was sent from
                         voiceChannel.join();
                         channel.sendMessage("Joined " + voiceChannel.getName() + ".");
                     }
@@ -115,32 +118,32 @@ public class MessageHandler {
                     channel.sendMessage("**You must have Discord Nitro™ to view this message.**");
                     break;
                 case queue:
-                    if(nextWord == null) {
+                    if (nextWord == null) {
                         channel.sendMessage("Please type the file name to play.");
-                    }
-                    else {
+                    } else {
                         queueFile(nextWord);
                     }
                     break;
                 case changeprefix:
-                    if(guild.setPrefix(nextWord)){
+                    if (guild.setPrefix(nextWord)) {
                         channel.sendMessage("Prefix changed to " + nextWord);
-                    }
-                    else{
+                    } else {
                         channel.sendMessage("Prefix change unsuccessful.");
                     }
                     break;
                 case poke:
-                    channel.sendMessage(nextWord + " " + user.getDisplayName(iGuild) + " poked you with their " + getRandomNoun() + ".");
+                    channel.sendMessage(nextWord + " " + user.getDisplayName(iGuild) + " poked you with their " +
+                            getRandomNoun() + ".");
                     break;
                 case love:
                     int loveChance = (int) (Math.random() * 101);
-                    channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with " + nextWord + " is "
+                    channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with "
+                            + nextWord + " is "
                             + loveChance + "%.");
                     break;
                 case chat:
                     guild.toggleChatMode();
-                    if(guild.getChatMode())
+                    if (guild.getChatMode())
                         channel.sendMessage("CHAT MODE ON");
                     else
                         channel.sendMessage("CHAT MODE OFF");
@@ -161,21 +164,21 @@ public class MessageHandler {
 
     }
 
-    private String getRandomNoun(){
+    private String getRandomNoun() {
         String[] nouns = {"stick", "child", "tea", "wife", "church", "pizza", "bird", "map", "pencil",
-            "crown", "chopstick", "sword", "highlighter", "pancake", "wallet", "ruler", "nail clipper",
-            "coin", "pillow", "cup", "fish", "rock", "song", "shirt", "umbrella", "mosquito", "cow",
-            "China", "glue", "mouse", "tissue", "hot sauce", "shuttlecock", "tongue", "toe", "syrup",
-            "laptop", "homework", "laundry", "code", "cowboy", "truck", "stripper", "peasant", "hobo",
-            "frog", "barber", "rabbit", "scissors", "grandma", "cherry", "chair", "poop", "library",
-            "data", "wealth", "branch", "dinner", "beef", "claw", "kimchi", "basketball", "egg"};
+                "crown", "chopstick", "sword", "highlighter", "pancake", "wallet", "ruler", "nail clipper",
+                "coin", "pillow", "cup", "fish", "rock", "song", "shirt", "umbrella", "mosquito", "cow",
+                "China", "glue", "mouse", "tissue", "hot sauce", "shuttlecock", "tongue", "toe", "syrup",
+                "laptop", "homework", "laundry", "code", "cowboy", "truck", "stripper", "peasant", "hobo",
+                "frog", "barber", "rabbit", "scissors", "grandma", "cherry", "chair", "poop", "library",
+                "data", "wealth", "branch", "dinner", "beef", "claw", "kimchi", "basketball", "egg"};
 
         int index = (int) (Math.random() * nouns.length);
         return nouns[index];
     }
 
     // TODO streaming music locally sucks
-    private void queueFile(String fileName) throws RateLimitException, MissingPermissionsException, DiscordException{
+    private void queueFile(String fileName) throws RateLimitException, MissingPermissionsException, DiscordException {
         File f = new File(fileName);
         if (!f.exists())
             channel.sendMessage("That file doesn't exist!");
@@ -203,11 +206,10 @@ public class MessageHandler {
         eb.withTitle("Command Prefix");
         eb.withDescription(guild.getPrefix());
 
-        // TODO
+        // TODO add more commands
         eb.appendField("Commands",
                 "help, ping, voicejoin, voiceleave, markov, chat, shutup, " +
                         "uptime, quote, unlikesuika, ding, noremacc", true);
-
 
 
         eb.withFooterIcon(message.getAuthor().getAvatarURL());
@@ -216,5 +218,7 @@ public class MessageHandler {
         EmbedObject eo = eb.build();
         channel.sendMessage("Here are the commands.", eo, false); // boolean toggles tts
     }
+
+    // TODO add explanations for each command as a embed message
 
 }
