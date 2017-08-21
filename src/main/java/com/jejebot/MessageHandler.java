@@ -59,8 +59,8 @@ public class MessageHandler {
         String commandWord = words[0].replace(guild.getPrefix(), ""); // get command without the command_prefix
         String nextWord = words.length >= 2 ? words[1] : null;
 
-        Command command = Command.valueOf(commandWord);
         try {
+            Command command = Command.valueOf(commandWord);
             switch (command) {
                 case help:
                     sendHelpMessage();
@@ -98,17 +98,7 @@ public class MessageHandler {
                     break;
                 case unlikesuika:
                     message.addReaction("\uD83C\uDDFC");
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
                     message.addReaction("\uD83C\uDDE6");
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
                     message.addReaction("\uD83C\uDDFA");
                     break;
                 case ding:
@@ -144,9 +134,9 @@ public class MessageHandler {
                 case chat:
                     guild.toggleChatMode();
                     if (guild.getChatMode())
-                        channel.sendMessage("CHAT MODE ON");
+                        channel.sendMessage("Talk to me.");
                     else
-                        channel.sendMessage("CHAT MODE OFF");
+                        channel.sendMessage("I'll go back to being a bot");
                     break;
                 case markov:
                 case shutup:
@@ -160,6 +150,8 @@ public class MessageHandler {
         } catch (RateLimitException re) {
             re.printStackTrace();
             System.out.println("Messages being sent too fast...");
+        } catch (IllegalArgumentException e) { // if command doesnt exist
+            channel.sendMessage("Command is not available.");
         }
 
     }
@@ -179,6 +171,7 @@ public class MessageHandler {
 
     // TODO streaming music locally sucks
     private void queueFile(String fileName) throws RateLimitException, MissingPermissionsException, DiscordException {
+        fileName = Config.PATH + fileName;
         File f = new File(fileName);
         if (!f.exists())
             channel.sendMessage("That file doesn't exist!");
@@ -208,7 +201,7 @@ public class MessageHandler {
 
         // TODO add more commands
         eb.appendField("Commands",
-                "help, ping, voicejoin, voiceleave, markov, chat, shutup, " +
+                "help, queue, ping, voicejoin, voiceleave, markov, chat, shutup, " +
                         "uptime, quote, unlikesuika, ding, noremacc", true);
 
 
