@@ -3,7 +3,6 @@ package com.jejebot;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventDispatcher;
-import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 
 /**
@@ -15,9 +14,6 @@ public class Main {
     public static void main(String[] args) {
         IDiscordClient client = createClient();
         if (client == null) return;
-
-        // TODO why doesnt this work
-        client.changeStatus(Status.game("Type !help to get started"));
 
         EventDispatcher dispatcher = client.getDispatcher();
         dispatcher.registerListener(new MessageHandler());

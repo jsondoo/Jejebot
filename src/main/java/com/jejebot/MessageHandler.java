@@ -2,17 +2,12 @@ package com.jejebot;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
-import sx.blah.discord.util.audio.AudioPlayer;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
@@ -81,38 +76,11 @@ public class MessageHandler {
                     else
                         channel.sendMessage("Uptime for jejebot: " + minutes + "m " + seconds + "s");
                     break;
-                case voicejoin:
-                    IVoiceChannel voiceChannel = message.getAuthor().getConnectedVoiceChannels().get(0);
-                    if (message.getGuild().getVoiceChannels().contains(voiceChannel)) { // ensure that the voice
-                        // channel exists in the iGuild the message was sent from
-                        voiceChannel.join();
-                        channel.sendMessage("Joined " + voiceChannel.getName() + ".");
-                    }
-                    break;
-                case voiceleave:
-                    IVoiceChannel connected = message.getGuild().getConnectedVoiceChannel();
-                    if (connected != null) {
-                        channel.sendMessage("Leaving " + connected.getName() + ".");
-                        connected.leave();
-                    }
-                    break;
-                case unlikesuika:
-                    message.addReaction("\uD83C\uDDFC");
-                    message.addReaction("\uD83C\uDDE6");
-                    message.addReaction("\uD83C\uDDFA");
-                    break;
                 case ding:
                     channel.sendMessage(":flag_cn:");
                     break;
                 case noremacc:
                     channel.sendMessage("**You must have Discord Nitro™ to view this message.**");
-                    break;
-                case queue:
-                    if (nextWord == null) {
-                        channel.sendMessage("Please type the file name to play.");
-                    } else {
-                        queueFile(nextWord);
-                    }
                     break;
                 case changeprefix:
                     if (guild.setPrefix(nextWord)) {
@@ -169,25 +137,25 @@ public class MessageHandler {
         return nouns[index];
     }
 
-    // TODO streaming music locally sucks
-    private void queueFile(String fileName) throws RateLimitException, MissingPermissionsException, DiscordException {
-        fileName = Config.PATH + fileName;
-        File f = new File(fileName);
-        if (!f.exists())
-            channel.sendMessage("That file doesn't exist!");
-        else if (!f.canRead())
-            channel.sendMessage("I don't have access to that file!");
-        else {
-            try {
-                AudioPlayer ap = AudioPlayer.getAudioPlayerForGuild(iGuild);
-                ap.queue(f);
-            } catch (IOException e) {
-                channel.sendMessage("An IO exception occured: " + e.getMessage());
-            } catch (UnsupportedAudioFileException e) {
-                channel.sendMessage("That type of file is not supported!");
-            }
-        }
-    }
+    // streaming music locally sucks
+//    private void queueFile(String fileName) throws RateLimitException, MissingPermissionsException, DiscordException {
+//        fileName = Config.PATH + fileName;
+//        File f = new File(fileName);
+//        if (!f.exists())
+//            channel.sendMessage("That file doesn't exist!");
+//        else if (!f.canRead())
+//            channel.sendMessage("I don't have access to that file!");
+//        else {
+//            try {
+//                AudioPlayer ap = AudioPlayer.getAudioPlayerForGuild(iGuild);
+//                ap.queue(f);
+//            } catch (IOException e) {
+//                channel.sendMessage("An IO exception occured: " + e.getMessage());
+//            } catch (UnsupportedAudioFileException e) {
+//                channel.sendMessage("That type of file is not supported!");
+//            }
+//        }
+//    }
 
     private void sendHelpMessage() throws MissingPermissionsException, RateLimitException, DiscordException {
         EmbedBuilder eb = new EmbedBuilder();
@@ -199,10 +167,10 @@ public class MessageHandler {
         eb.withTitle("Command Prefix");
         eb.withDescription(guild.getPrefix());
 
-        // TODO add more commands
+        // TODO use Command Enum to generate this
         eb.appendField("Commands",
-                "help, queue, ping, voicejoin, voiceleave, markov, chat, shutup, " +
-                        "uptime, quote, unlikesuika, ding, noremacc", true);
+                "help, queue, ping, markov, chat, shutup, " +
+                        "uptime, quote, ding, noremacc", true);
 
 
         eb.withFooterIcon(message.getAuthor().getAvatarURL());
@@ -211,7 +179,4 @@ public class MessageHandler {
         EmbedObject eo = eb.build();
         channel.sendMessage("Here are the commands.", eo, false); // boolean toggles tts
     }
-
-    // TODO add explanations for each command as a embed message
-
 }

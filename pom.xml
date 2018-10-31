@@ -22,11 +22,11 @@
     <version>1.1.0</version>
 
     <repositories>
-        <repository> <!-- For Discord4j -->
+        <repository>
             <id>jcenter</id>
             <url>http://jcenter.bintray.com</url>
         </repository>
-        <repository> <!-- For Discord4j -->
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -35,18 +35,13 @@
     <dependencies>
         <dependency>
             <groupId>com.github.austinv11</groupId>
-            <artifactId>Discord4j</artifactId>
-            <version>2.7.0</version>
+            <artifactId>Discord4J</artifactId>
+            <version>2.10.0</version>
         </dependency>
-
         <dependency>
             <groupId>ca.pjer</groupId>
             <artifactId>chatter-bot-api</artifactId>
             <version>1.4.7</version>
         </dependency>
     </dependencies>
-
-
-
-
 </project>
