@@ -90,14 +90,33 @@ public class MessageHandler {
                     }
                     break;
                 case poke:
-                    channel.sendMessage(nextWord + " " + user.getDisplayName(iGuild) + " poked you with their " +
-                            getRandomNoun() + ".");
+                    if (nextWord == null) {
+                        channel.sendMessage(user.getDisplayName(iGuild) + " pokes a " +
+                                getRandomNoun() + " with their " + getRandomNoun());
+                    } else {
+                        channel.sendMessage(user.getDisplayName(iGuild) + " pokes " + nextWord+ " with their " +
+                                getRandomNoun() + ".");
+                    }
                     break;
                 case love:
                     int loveChance = (int) (Math.random() * 101);
-                    channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with "
-                            + nextWord + " is "
-                            + loveChance + "%.");
+                    String reaction = "";
+                    if (loveChance > 70) {
+                        reaction = ":heart_eyes:";
+                    } else if (loveChance < 50) {
+                        reaction = ":confounded:";
+                    } else {
+                        reaction = "thinking";
+                    }
+                    if (words.length <= 2) {
+                        channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with "
+                                + nextWord + " is "
+                                + loveChance + "%. " + reaction);
+                    } else {
+                        channel.sendMessage("Chance of " + nextWord + " being in a relationship with "
+                                + words[2] + " is "
+                                + loveChance + "%. " + reaction);
+                    }
                     break;
                 case chat:
                     guild.toggleChatMode();
@@ -106,8 +125,24 @@ public class MessageHandler {
                     else
                         channel.sendMessage("I'll go back to being a bot");
                     break;
+                case fn:
+                    EmbedObject fn_stats = null;
+                    if (words.length == 1 || words.length >= 4) {
+                        channel.sendMessage(guild.getPrefix() + "fn " + "<username> <platform>");
+                        break;
+                    } else if (words.length == 2) { // default to pc as platform
+                        fn_stats = Fortnite.getFortniteStats(nextWord, "pc");
+                    } else if (words.length == 3){
+                        String platform = words[2];
+                        fn_stats = Fortnite.getFortniteStats(nextWord, platform);
+                    }
+                    if (fn_stats == null) {
+                        channel.sendMessage("Error getting fortnite data!");
+                    } else {
+                        channel.sendMessage("", fn_stats, false);
+                    }
+                    break;
                 case markov:
-                case shutup:
                 case quote:
                 default:
                     channel.sendMessage("Command is not available.");
@@ -125,13 +160,11 @@ public class MessageHandler {
     }
 
     private String getRandomNoun() {
-        String[] nouns = {"stick", "child", "tea", "wife", "church", "pizza", "bird", "map", "pencil",
-                "crown", "chopstick", "sword", "highlighter", "pancake", "wallet", "ruler", "nail clipper",
-                "coin", "pillow", "cup", "fish", "rock", "song", "shirt", "umbrella", "mosquito", "cow",
-                "China", "glue", "mouse", "tissue", "hot sauce", "shuttlecock", "tongue", "toe", "syrup",
+        String[] nouns = {"broom", "teapot", "iPhone", "halloween candies", "pitchfork", "tongue", "stapler", "pencil",
+                "crown", "chopstick", "katana", "highlighter", "nail clipper", "shuttlecock", "toe", "fanny pack",
                 "laptop", "homework", "laundry", "code", "cowboy", "truck", "stripper", "peasant", "hobo",
-                "frog", "barber", "rabbit", "scissors", "grandma", "cherry", "chair", "poop", "library",
-                "data", "wealth", "branch", "dinner", "beef", "claw", "kimchi", "basketball", "egg"};
+                "banana", "frozen grapes", "scissors", "power of mathematical induction", "stupidity",
+                "code", "claw", "kimchi", "icecream sandwich", "egg", "chicken wing"};
 
         int index = (int) (Math.random() * nouns.length);
         return nouns[index];
@@ -169,7 +202,7 @@ public class MessageHandler {
 
         // TODO use Command Enum to generate this
         eb.appendField("Commands",
-                "help, queue, ping, markov, chat, shutup, " +
+                "ping, markov, fn, chat, love, poke," +
                         "uptime, quote, ding, noremacc", true);
 
 
