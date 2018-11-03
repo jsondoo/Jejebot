@@ -10,6 +10,9 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles messages and does command parsing
@@ -127,14 +130,18 @@ public class MessageHandler {
                     break;
                 case fn:
                     EmbedObject fn_stats = null;
-                    if (words.length == 1 || words.length >= 4) {
+                    if (words.length == 1) {
                         channel.sendMessage(guild.getPrefix() + "fn " + "<username> <platform>");
                         break;
-                    } else if (words.length == 2) { // default to pc as platform
-                        fn_stats = Fortnite.getFortniteStats(nextWord, "pc");
-                    } else if (words.length == 3){
-                        String platform = words[2];
-                        fn_stats = Fortnite.getFortniteStats(nextWord, platform);
+                    } else {
+                        String platform = words[words.length - 1];
+                        // username is words[1] to words[len(words) - 2] joined
+                        List<String> list = new ArrayList<>();
+                        for(int i = 1; i <= words.length - 2; ++i) {
+                            list.add(words[i]);
+                        }
+                        String username = String.join(" ", list);
+                        fn_stats = Fortnite.getFortniteStats(username, platform);
                     }
                     if (fn_stats == null) {
                         channel.sendMessage("Error getting fortnite data!");
