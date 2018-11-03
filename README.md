@@ -13,4 +13,5 @@ Currently available commands:
 * ``` !changeprefix ``` change command prefix for your guild
 * ``` !love ``` chance of relationship with another user
 * ``` !markov ``` generates a message using a [markov-chain algorithm](http://stackoverflow.com/a/5307230) 
+* ``` !fn <username> <platform> ``` retrieves Fortnite lifetime stats for <username> on <platform>
 
