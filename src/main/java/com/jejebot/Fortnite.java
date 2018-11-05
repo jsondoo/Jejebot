@@ -5,13 +5,8 @@ import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.impl.obj.Embed;
 import sx.blah.discord.util.EmbedBuilder;
-
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class Fortnite {
     private static String sendGETrequest(String username, String platform) {

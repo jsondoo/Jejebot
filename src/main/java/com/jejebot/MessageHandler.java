@@ -11,7 +11,6 @@ import sx.blah.discord.util.RateLimitException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,13 +102,13 @@ public class MessageHandler {
                     break;
                 case love:
                     int loveChance = (int) (Math.random() * 101);
-                    String reaction = "";
+                    String reaction;
                     if (loveChance > 70) {
                         reaction = ":heart_eyes:";
                     } else if (loveChance < 50) {
                         reaction = ":confounded:";
                     } else {
-                        reaction = "thinking";
+                        reaction = ":thinking:";
                     }
                     if (words.length <= 2) {
                         channel.sendMessage("Chance of " + user.getDisplayName(iGuild) + " being in a relationship with "
@@ -129,7 +128,7 @@ public class MessageHandler {
                         channel.sendMessage("I'll go back to being a bot");
                     break;
                 case fn:
-                    EmbedObject fn_stats = null;
+                    EmbedObject fn_stats;
                     if (words.length == 1) {
                         channel.sendMessage(guild.getPrefix() + "fn " + "<username> <platform>");
                         break;
