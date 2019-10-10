@@ -2,14 +2,22 @@ package com.jejebot;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
+import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.util.audio.AudioPlayer;
+
 import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +67,24 @@ public class MessageHandler {
         try {
             Command command = Command.valueOf(commandWord);
             switch (command) {
+                case join:
+                    IVoiceChannel voiceChannel = user.getVoiceStateForGuild(iGuild).getChannel();
+                    if (voiceChannel == null) {
+                        channel.sendMessage("You are not connected to a voice channel.");
+                        return;
+                    }
+
+                    voiceChannel.join(); // assuming bot has permission to connect
+                    channel.sendMessage("Connected to **" + voiceChannel.getName() + "**.");
+                    break;
+                case play:
+                    try {
+                        URL url = new URL(nextWord);
+                        queueUrl(url);
+                    } catch(Exception e) {
+                        channel.sendMessage("Failed to queue music");
+                        return;
+                    }
                 case help:
                     sendHelpMessage();
                     break;
@@ -161,6 +187,8 @@ public class MessageHandler {
             System.out.println("Messages being sent too fast...");
         } catch (IllegalArgumentException e) { // if command doesnt exist
             channel.sendMessage("Command is not available.");
+        } catch (NullPointerException e) {
+            System.out.println(e.toString());
         }
 
     }
@@ -174,6 +202,11 @@ public class MessageHandler {
 
         int index = (int) (Math.random() * nouns.length);
         return nouns[index];
+    }
+
+    private void queueUrl(URL url) throws RateLimitException, DiscordException,
+            MissingPermissionsException, IOException, UnsupportedAudioFileException {
+        AudioPlayer.getAudioPlayerForGuild(channel.getGuild()).queue(url);
     }
 
     // streaming music locally sucks
